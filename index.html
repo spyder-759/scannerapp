@@ -3,446 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Scanner</title>
+    <title>QR Scanner</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #1a1a1a;
-            color: white;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial; 
+            background: #1a1a1a; 
+            color: white; 
+            padding: 20px; 
             text-align: center;
         }
-
-        .header {
-            margin-bottom: 30px;
+        .container { max-width: 500px; margin: 0 auto; }
+        .scanner-box { 
+            background: black; 
+            border: 3px solid #4CAF50; 
+            border-radius: 15px; 
+            padding: 20px; 
+            margin: 20px 0; 
         }
-
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: #4CAF50;
-        }
-
-        .scanner-section, .result-section {
-            display: none;
-        }
-
-        .active {
-            display: block;
-        }
-
-        .scanner-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 3px solid #4CAF50;
-            background: black;
-        }
-
-        #qr-video {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-        }
-
-        .scan-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: #4CAF50;
-            animation: scan 2s linear infinite;
-            box-shadow: 0 0 20px #4CAF50;
-        }
-
-        @keyframes scan {
-            0% { top: 0; }
-            50% { top: 100%; }
-            100% { top: 0; }
-        }
-
-        .scanner-frame {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 250px;
-            height: 250px;
-            border: 2px solid #4CAF50;
-            border-radius: 15px;
-        }
-
-        .status {
-            margin: 20px 0;
-            padding: 15px;
-            background: #2a2a2a;
-            border-radius: 10px;
-            border-left: 4px solid #4CAF50;
-        }
-
-        .status-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #4CAF50;
-            margin-right: 10px;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .result-card {
-            background: #2a2a2a;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 20px 0;
-            border-left: 5px solid #4CAF50;
-        }
-
-        .result-card.success {
-            border-left-color: #4CAF50;
-            background: linear-gradient(135deg, #2a2a2a 0%, #1e3c1e 100%);
-        }
-
-        .result-card.error {
-            border-left-color: #f44336;
-            background: linear-gradient(135deg, #2a2a2a 0%, #3c1e1e 100%);
-        }
-
-        .user-info {
-            background: #333;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 15px 0;
-            text-align: left;
-        }
-
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 12px 0;
-            padding: 8px 0;
-            border-bottom: 1px solid #444;
-        }
-
-        .info-label {
-            font-weight: bold;
-            color: #4CAF50;
-        }
-
-        .info-value {
-            color: white;
-        }
-
-        .btn {
-            padding: 15px 30px;
-            margin: 10px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
+        #qr-video { width: 100%; height: 300px; border-radius: 10px; }
+        .btn { 
+            padding: 15px 30px; 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            margin: 10px; 
             cursor: pointer;
-            background: #4CAF50;
-            color: white;
-            transition: all 0.3s ease;
         }
-
-        .btn:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-        }
-
-        .btn-scan-again {
-            background: #2196F3;
-        }
-
-        .btn-scan-again:hover {
-            background: #1976D2;
-        }
-
-        .instructions {
-            background: #333;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px 0;
+        .result { 
+            background: #2a2a2a; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin: 20px 0; 
             text-align: left;
-        }
-
-        .instructions h3 {
-            color: #4CAF50;
-            margin-bottom: 10px;
-        }
-
-        .instructions ul {
-            padding-left: 20px;
-        }
-
-        .instructions li {
-            margin: 8px 0;
-            color: #ccc;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Scanner Section -->
-        <div id="scannerSection" class="scanner-section active">
-            <div class="header">
-                <h1>📱 QR Code Scanner</h1>
-                <p>Point your camera at any QR code to scan</p>
-            </div>
-
-            <div class="instructions">
-                <h3>How to use:</h3>
-                <ul>
-                    <li>Allow camera access when prompted</li>
-                    <li>Point camera at QR code</li>
-                    <li>Keep QR code within the frame</li>
-                    <li>Scanning happens automatically</li>
-                </ul>
-            </div>
-
-            <div class="scanner-container">
-                <video id="qr-video" playsinline></video>
-                <div class="scan-overlay">
-                    <div class="scanner-frame"></div>
-                    <div class="scan-line"></div>
-                </div>
-            </div>
-
-            <div class="status">
-                <span class="status-dot"></span>
-                <span>Scanner ready - Point camera at QR code</span>
-            </div>
-
-            <button class="btn" onclick="startScanner()">Start Scanner</button>
-            <button class="btn" onclick="stopScanner()" style="background: #f44336;">Stop Scanner</button>
+        <h1>📱 QR Scanner</h1>
+        <p>Allow camera access to start scanning</p>
+        
+        <div class="scanner-box">
+            <video id="qr-video"></video>
         </div>
-
-        <!-- Result Section -->
-        <div id="resultSection" class="result-section">
-            <div class="header">
-                <h1>🔍 Scan Result</h1>
-                <p>QR code scanned successfully</p>
-            </div>
-
-            <div id="resultMessage"></div>
-            
-            <div id="userInfo" class="user-info" style="display: none;">
-                <h3 style="text-align: center; margin-bottom: 15px; color: #4CAF50;">📋 Scan Details</h3>
-                <div class="info-item">
-                    <span class="info-label">Name:</span>
-                    <span class="info-value" id="userName">-</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Meal Type:</span>
-                    <span class="info-value" id="userMeal">-</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Day:</span>
-                    <span class="info-value" id="userDay">-</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Mobile:</span>
-                    <span class="info-value" id="userMobile">-</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Scan Time:</span>
-                    <span class="info-value" id="scanTime">-</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Valid Until:</span>
-                    <span class="info-value" id="validUntil">-</span>
-                </div>
-            </div>
-
-            <button class="btn btn-scan-again" onclick="scanAgain()">Scan Another QR Code</button>
+        
+        <button class="btn" onclick="startScanner()">Start Camera</button>
+        <button class="btn" onclick="stopScanner()" style="background: #f44336;">Stop Camera</button>
+        
+        <div id="result" class="result" style="display: none;">
+            <h3>📋 Scan Result:</h3>
+            <pre id="result-data"></pre>
         </div>
     </div>
 
-    <!-- QR Scanner Library -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
-    
     <script>
-        let html5QrcodeScanner = null;
-        let isScannerRunning = false;
-
-        // Start scanner
+        let scanner = null;
+        
         function startScanner() {
-            if (isScannerRunning) return;
-
             Html5Qrcode.getCameras().then(cameras => {
-                if (cameras && cameras.length) {
-                    html5QrcodeScanner = new Html5QrcodeScanner(
+                if (cameras.length) {
+                    scanner = new Html5QrcodeScanner(
                         "qr-reader",
-                        { 
-                            fps: 10, 
-                            qrbox: { width: 250, height: 250 },
-                            aspectRatio: 1.0
-                        },
+                        { fps: 10, qrbox: 250 },
                         false
                     );
-
-                    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-                    isScannerRunning = true;
-                    updateStatus('Scanner active - Point camera at QR code');
                     
-                } else {
-                    showError('No camera found!', 'Please check your camera permissions.');
+                    scanner.render((text) => {
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('result-data').textContent = text;
+                        stopScanner();
+                    });
                 }
-            }).catch(err => {
-                showError('Camera access denied', 'Please allow camera access to scan QR codes.');
             });
         }
-
-        // Stop scanner
+        
         function stopScanner() {
-            if (html5QrcodeScanner && isScannerRunning) {
-                html5QrcodeScanner.clear().then(() => {
-                    isScannerRunning = false;
-                    updateStatus('Scanner stopped');
-                });
+            if (scanner) {
+                scanner.clear();
+                scanner = null;
             }
         }
-
-        // Successful scan
-        function onScanSuccess(decodedText, decodedResult) {
-            console.log("QR Code scanned:", decodedText);
-            stopScanner();
-            processQRData(decodedText);
-        }
-
-        // Scan failure
-        function onScanFailure(error) {
-            // Silent failure - normal operation
-        }
-
-        // Process QR data
-        function processQRData(qrData) {
-            try {
-                const data = JSON.parse(qrData);
-                console.log("Parsed QR data:", data);
-                
-                // Show scan result with all details
-                showScanResult(data);
-                
-            } catch (error) {
-                // If not JSON, show raw text
-                showRawResult(qrData);
-            }
-        }
-
-        // Show scan result for meal QR codes
-        function showScanResult(data) {
-            document.getElementById('scannerSection').classList.remove('active');
-            document.getElementById('resultSection').classList.add('active');
-
-            const resultDiv = document.getElementById('resultMessage');
-            const userInfoDiv = document.getElementById('userInfo');
-
-            resultDiv.innerHTML = `
-                <div class="result-card success">
-                    <h2 style="color: #4CAF50; margin-bottom: 10px;">✅ QR Code Scanned Successfully!</h2>
-                    <p style="font-size: 1.1rem;">QR code content decoded and displayed below.</p>
-                </div>
-            `;
-
-            // Show user information
-            userInfoDiv.style.display = 'block';
-            
-            // Fill user details
-            document.getElementById('userName').textContent = data.name || 'Not available';
-            document.getElementById('userMeal').textContent = data.meal || 'Not available';
-            document.getElementById('userDay').textContent = data.day ? 'Day ' + data.day : 'Not available';
-            document.getElementById('userMobile').textContent = data.mobile || 'Not available';
-            document.getElementById('scanTime').textContent = new Date().toLocaleString();
-            document.getElementById('validUntil').textContent = data.validUntil ? 
-                new Date(data.validUntil).toLocaleString() : 'Not available';
-
-            // Color code based on day
-            const dayElement = document.getElementById('userDay');
-            if (data.day === 1) dayElement.style.color = '#4CAF50';
-            else if (data.day === 2) dayElement.style.color = '#FF9800';
-            else if (data.day === 3) dayElement.style.color = '#F44336';
-        }
-
-        // Show raw result for non-JSON QR codes
-        function showRawResult(rawText) {
-            document.getElementById('scannerSection').classList.remove('active');
-            document.getElementById('resultSection').classList.add('active');
-
-            const resultDiv = document.getElementById('resultMessage');
-            const userInfoDiv = document.getElementById('userInfo');
-
-            resultDiv.innerHTML = `
-                <div class="result-card">
-                    <h2 style="color: #2196F3; margin-bottom: 10px;">📄 QR Code Scanned!</h2>
-                    <p style="font-size: 1.1rem; margin-bottom: 15px;">This QR code contains text data:</p>
-                    <div style="background: #333; padding: 15px; border-radius: 8px; word-break: break-all;">
-                        ${rawText}
-                    </div>
-                </div>
-            `;
-
-            userInfoDiv.style.display = 'none';
-        }
-
-        // Update status
-        function updateStatus(message) {
-            const statusElement = document.querySelector('.status span:last-child');
-            if (statusElement) {
-                statusElement.textContent = message;
-            }
-        }
-
-        // Show error
-        function showError(title, message) {
-            alert(`❌ ${title}\n\n${message}`);
-        }
-
-        // Scan again
-        function scanAgain() {
-            document.getElementById('userInfo').style.display = 'none';
-            document.getElementById('resultSection').classList.remove('active');
-            document.getElementById('scannerSection').classList.add('active');
-            startScanner();
-        }
-
-        // Auto-start scanner when page loads
-        window.onload = function() {
-            console.log('🚀 QR Scanner loaded - ready to scan!');
-            startScanner();
-        };
+        
+        // Auto-start
+        startScanner();
     </script>
 </body>
 </html>
